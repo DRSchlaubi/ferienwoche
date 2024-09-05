@@ -28,7 +28,7 @@
         <span class="material-symbols-outlined text-base align-middle">code</span> mit <span
           class="material-symbols-outlined text-base align-middle">favorite</span> by
         <a href="https://schlau.bi" class="text-blue-500 dark:text-blue-300"> Schlaubi </a>
-        &
+        &amp;
         <a href="https://korsti.pp.ua" class="text-blue-500 dark:text-blue-300"> Korsti </a>
         auf <a class="text-blue-500 dark:text-blue-300" href="https://github.com/DRSchlaubi/ferienwoche">GitHub</a>
       </p>
