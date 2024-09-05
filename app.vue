@@ -6,8 +6,8 @@
         <p class="mb-2">Wir haben aktuell die {{ 126481 }}. Ferienwoche nach der Feria Scolarum.</p>
         <p class="mb-2">
           Wir haben aktuell die {{ 4301 }}. Ferienwoche nach <a
-href="https://schulferien.org" target="_blank"
-                                                                class="text-blue-500 dark:text-blue-300">Schulferien.org</a>.
+            href="https://schulferien.org" target="_blank"
+            class="text-blue-500 dark:text-blue-300">Schulferien.org</a>.
         </p>
         <p class="mb-2">
           Wir haben aktuell die {{ weeksSinceGermanyFoundingDate }}. Ferienwoche seit Gründung der Bundesrepublik
@@ -18,14 +18,15 @@ href="https://schulferien.org" target="_blank"
             href="https://de.wikipedia.org/wiki/Hamburger_Abkommen" target="_blank"
             class="text-blue-500 dark:text-blue-300">Hamburger Abkommen</a>“.
         </p>
-        <p class="mb-2">
-          Wir haben aktuell die {{ weeksSinceStartOfYear }}. Ferienwoche des aktuellen Jahres.
+        <p v-if="currentYear" class="mb-2">
+          Wir haben aktuell die {{ currentYear }}. Ferienwoche des aktuellen Jahres.
         </p>
       </div>
     </div>
     <footer class="fixed bottom-0 left-0 w-full text-center pb-4">
       <p>
-        <span class="material-symbols-outlined text-base align-middle">code</span> mit <span class="material-symbols-outlined text-base align-middle">favorite</span> by
+        <span class="material-symbols-outlined text-base align-middle">code</span> mit <span
+          class="material-symbols-outlined text-base align-middle">favorite</span> by
         <a href="https://schlau.bi" class="text-blue-500 dark:text-blue-300"> Schlaubi </a>
         &
         <a href="https://korsti.pp.ua" class="text-blue-500 dark:text-blue-300"> Korsti </a>
@@ -37,6 +38,10 @@ href="https://schulferien.org" target="_blank"
 
 <script lang="ts">
 import {ChronoUnit, LocalDate, Month, type Temporal, Year} from "@js-joda/core";
+import {findLastSummerHoliday} from './utils/holidays';
+import {useAsyncData} from "#app";
+
+const currentYear = ref(undefined);
 
 function calculateWeeksSince(start: Temporal): number {
   const now = LocalDate.now();
@@ -45,11 +50,24 @@ function calculateWeeksSince(start: Temporal): number {
 }
 
 export default {
+  async setup() {
+    const {data, error} = await useAsyncData(`holidays-${Year.now().value()}`, async () => {
+      return await findLastSummerHoliday();
+    });
+
+    if (error.value) {
+      console.log(error.value);
+    }
+
+    if (data.value) {
+      currentYear.value = calculateWeeksSince(data.value);
+    }
+  },
   data() {
     return {
-      currentYear: Year.now().atDay(1),
+      currentYear,
       hamburgTreatyDate: LocalDate.of(1964, Month.OCTOBER, 28),
-      germanyFoundingDate: LocalDate.of(1964, Month.OCTOBER, 28),
+      germanyFoundingDate: LocalDate.of(1964, Month.OCTOBER, 28)
     };
   },
 
@@ -60,9 +78,6 @@ export default {
     weeksSinceHamburgTreaty(): number {
       return calculateWeeksSince(this.hamburgTreatyDate);
     },
-    weeksSinceStartOfYear(): number {
-      return calculateWeeksSince(this.currentYear);
-    }
-  }
+  },
 }
 </script>
