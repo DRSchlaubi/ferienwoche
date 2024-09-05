@@ -19,23 +19,12 @@ jobs:
           run_install: true
       - run: pnpm build
       - run: pnpm lint
-      - run: pnpm dlx nuxi generate
+      - run: pnpm run build
         if: github.ref_name == 'main'
-      - name: Setup Pages
+        env:
+          NITRO_PRESET: cloudflare
+      - name: Deploy
         if: github.ref_name == 'main'
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        if: github.ref_name == 'main'
-        uses: actions/upload-pages-artifact@v3
+        uses: cloudflare/wrangler-action@v3
         with:
-          path: dist
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: [ build ]
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
