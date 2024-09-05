@@ -1,0 +1,41 @@
+name: Deployment CI
+on:
+  push:
+  pull_request:
+
+permissions:
+  id-token: write
+  pages: write
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: true
+      - run: pnpm build
+      - run: pnpm lint
+      - run: pnpm dlx nuxi generate
+        if: github.ref_name == 'main
+      - name: Setup Pages
+        if: github.ref_name == 'main
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        if: github.ref_name == 'main
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: [ build ]
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
