@@ -20,12 +20,12 @@ jobs:
       - run: pnpm build
       - run: pnpm lint
       - run: pnpm dlx nuxi generate
-        if: github.ref_name == 'main
+        if: github.ref_name == 'main'
       - name: Setup Pages
-        if: github.ref_name == 'main
+        if: github.ref_name == 'main'
         uses: actions/configure-pages@v5
       - name: Upload artifact
-        if: github.ref_name == 'main
+        if: github.ref_name == 'main'
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
