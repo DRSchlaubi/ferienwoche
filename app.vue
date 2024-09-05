@@ -37,9 +37,8 @@
 </template>
 
 <script lang="ts">
-import {ChronoUnit, LocalDate, Month, type Temporal, Year} from "@js-joda/core";
+import {ChronoUnit, LocalDate, Month, type Temporal} from "@js-joda/core";
 import {findLastSummerHoliday} from './utils/holidays';
-import {useAsyncData} from "#app";
 
 const currentYear = ref(undefined);
 
@@ -50,19 +49,6 @@ function calculateWeeksSince(start: Temporal): number {
 }
 
 export default {
-  async setup() {
-    const {data, error} = await useAsyncData(`holidays-${Year.now().value()}`, async () => {
-      return await findLastSummerHoliday();
-    });
-
-    if (error.value) {
-      console.log(error.value);
-    }
-
-    if (data.value) {
-      currentYear.value = calculateWeeksSince(data.value);
-    }
-  },
   data() {
     return {
       currentYear,
@@ -78,6 +64,11 @@ export default {
     weeksSinceHamburgTreaty(): number {
       return calculateWeeksSince(this.hamburgTreatyDate);
     },
+  },
+  async mounted() {
+    findLastSummerHoliday().then(holiday => {
+      currentYear.value = calculateWeeksSince(holiday);
+    });
   },
 }
 </script>

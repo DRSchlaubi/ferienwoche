@@ -19,14 +19,25 @@ async function findLastSummerHoliday(year: Year = Year.now()): Promise<LocalDate
 }
 
 async function findHolidays(year: Year = Year.now()): Promise<Holiday> {
-    const response = await $fetch(`https://ferien-api.de/api/v1/holidays/BY/${year.value()}`);
+    const {
+        data,
+        refresh
+    } = await useFetch(`https://ferien-api.de/api/v1/holidays/BY/${year.value()}`, {
+        key: `holiday-${year.value()}`,
+        cache: "force-cache", // Enforces the usage of cache if available
+    });
 
-    return findSummerHolidays(response)
+    if (!data) {
+        await refresh(); // Fetches fresh data if no cached data is available
+    }
+
+    // Ensure the function returns the expected data structure
+    return findSummerHolidays(data.value);
 }
-
 function findSummerHolidays(holidays: Holiday[]): Holiday {
     return holidays.find(holiday => {
-        return holiday.name.startsWith('sommerferien')})
+        return holiday.name.startsWith('sommerferien')
+    })
 }
 
 export {findLastSummerHoliday, Holiday};
