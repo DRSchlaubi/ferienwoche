@@ -38,9 +38,9 @@
 
 <script lang="ts">
 import {ChronoUnit, LocalDate, Month, type Temporal} from "@js-joda/core";
-import {findLastSummerHoliday} from './utils/holidays';
 const format = new Intl.NumberFormat();
 
+const summerHolidayStore = ref(undefined)
 const currentYear = ref(undefined);
 
 function calculateWeeksSince(start: Temporal): number {
@@ -50,6 +50,10 @@ function calculateWeeksSince(start: Temporal): number {
 }
 
 export default {
+  setup() {
+    const {getOrFetchLastSummerHoliday} = useLastSummerHoliday();
+    summerHolidayStore.value = getOrFetchLastSummerHoliday;
+  },
   data() {
     return {
       currentYear,
@@ -75,7 +79,7 @@ export default {
     },
   },
   async mounted() {
-    findLastSummerHoliday().then(holiday => {
+    summerHolidayStore.value().then(holiday => {
       currentYear.value = calculateWeeksSince(holiday);
     });
   },
