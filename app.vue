@@ -75,7 +75,7 @@ export default {
       return calculateWeeksSince(this.feriaeScolarum);
     },
     weeksSinceSchulferienOrg(): number {
-      return calculateWeeksSince(this.hamburgTreatyDate);
+      return calculateWeeksSince(this.schulferienOrg);
     },
   },
   async mounted() {
