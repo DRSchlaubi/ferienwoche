@@ -40,8 +40,8 @@
 import {ChronoUnit, LocalDate, Month, type Temporal} from "@js-joda/core";
 const format = new Intl.NumberFormat();
 
-const summerHolidayStore = ref(undefined)
-const currentYear = ref(undefined);
+const summerHolidayStore = ref<() => Promise<LocalDate>>()
+const currentYear = ref<number>();
 
 function calculateWeeksSince(start: Temporal): number {
   const now = LocalDate.now();
@@ -79,7 +79,7 @@ export default {
     },
   },
   async mounted() {
-    summerHolidayStore.value().then(holiday => {
+    summerHolidayStore.value!().then(holiday => {
       currentYear.value = calculateWeeksSince(holiday);
     });
   },
