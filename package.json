@@ -18,6 +18,7 @@
     "@pinia/nuxt": "^0.5.4",
     "autoprefixer": "^10.4.20",
     "nuxt": "^3.13.0",
+    "pinia": "^2.2.2",
     "pinia-plugin-persistedstate": "^4.0.0",
     "postcss": "^8.4.45",
     "tailwindcss": "^3.4.10",
