@@ -3,13 +3,13 @@ on:
   push:
   pull_request:
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 permissions:
   contents: read
   packages: write
-  # This is used to complete the identity challenge
-  # with sigstore/fulcio when running outside of PRs.
-  id-token: write
-
 
 jobs:
   build:
@@ -22,6 +22,7 @@ jobs:
           run_install: true
       - uses: actions/setup-node@v4
         with:
+          node-version-file: 'package.json'
           cache: pnpm
       - run: pnpm build
       - run: pnpm lint
